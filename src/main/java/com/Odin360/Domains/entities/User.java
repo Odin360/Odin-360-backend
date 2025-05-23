@@ -3,12 +3,14 @@ package com.Odin360.Domains.entities;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
 
 @Entity
+
 @Getter
 @Setter
 @AllArgsConstructor
@@ -23,9 +25,14 @@ public class User {
     private String email;
     @Column(nullable = false)
     private String password;
+    @Column(nullable = false)
+    private boolean enabled;
     @ManyToMany
     @JoinTable(name = "user_organization",
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "organization_id"))
     private List<Organization> organization = new ArrayList<>();
+    @Column(name = "verificationCodeTime")
+    private LocalDateTime verificationCodeExpiresAt;
+    private String verificationCode;
 }

@@ -1,6 +1,7 @@
 package com.Odin360.services.impl;
 
 import com.Odin360.Domains.Dtos.CreateUserDto;
+import com.Odin360.Domains.Dtos.EmailDto;
 import com.Odin360.Domains.Dtos.UserPasswordDto;
 import com.Odin360.Domains.entities.User;
 import com.Odin360.mappers.UserMapper;
@@ -46,6 +47,13 @@ public class UserServiceImpl implements UserService {
             .orElseThrow(()->new RuntimeException(user.getEmail()+" was not found"));
     retrievedUser.setPassword(passwordEncoder.encode(user.getPassword()));
     userRepository.save(retrievedUser);
+    }
+
+    @Override
+    public User findByEmail(EmailDto emailDto) {
+        User user = userMapper.fromEmailDto(emailDto);
+        return userRepository.findByEmail(user.getEmail())
+                .orElseThrow(()->new RuntimeException(user.getEmail()+" was not found"));
     }
 
 }

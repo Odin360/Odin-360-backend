@@ -19,12 +19,7 @@ public class UserController {
     private final UserService userService;
     public final UserMapper userMapper;
 //create user
-    @PostMapping
-    public ResponseEntity<CreateUserDto> createUser(@RequestBody  CreateUserDto createUserDto){
-        User savedUser = userService.createUser(createUserDto);
-        CreateUserDto savedCreateUserDto = userMapper.toDto(savedUser);
-                return new ResponseEntity<>(savedCreateUserDto, HttpStatus.CREATED);
-    }
+
  //get user by id
     @GetMapping("{id}")
     public ResponseEntity<CreateUserDto> getUserById(@PathVariable("id") UUID id){
@@ -33,9 +28,5 @@ public class UserController {
         return ResponseEntity.ok(retrievedUserDto);
     }
  //update password
-    @PostMapping("/resetPassword")
-    public ResponseEntity<String> updatePasswordByEmail(@RequestBody  UserPasswordDto passwordDto){
-        userService.updatePasswordByEmail(passwordDto);
-        return ResponseEntity.ok("Password deleted successfully");
-    }
+
 }
