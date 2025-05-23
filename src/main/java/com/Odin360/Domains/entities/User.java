@@ -1,4 +1,4 @@
-package com.Odin360.entities;
+package com.Odin360.Domains.entities;
 
 import jakarta.persistence.*;
 import lombok.*;
