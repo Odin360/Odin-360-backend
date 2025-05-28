@@ -1,5 +1,6 @@
 package com.Odin360.services.impl;
 
+import com.Odin360.Domains.Dtos.EmailDto;
 import com.Odin360.Domains.Dtos.OtpDto;
 import com.Odin360.Domains.entities.User;
 import com.Odin360.repositories.UserRepository;
@@ -112,8 +113,8 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     }
 
     @Override
-    public void resendVerificationCode(OtpDto otpDto) {
-        User retrievedUser = userRepository.findByEmail(otpDto.getEmail())
+    public void resendVerificationCode(EmailDto emailDto) {
+        User retrievedUser = userRepository.findByEmail(emailDto.getEmail())
                 .orElseThrow(()->new RuntimeException("Account does not exist"));
         if (LocalDateTime.now().isBefore(retrievedUser.getVerificationCodeExpiresAt())){
             String code = retrievedUser.getVerificationCode();

@@ -1,5 +1,6 @@
 package com.Odin360.services;
 
+import com.Odin360.Domains.Dtos.EmailDto;
 import com.Odin360.Domains.Dtos.OtpDto;
 import com.Odin360.Domains.entities.User;
 import jakarta.mail.MessagingException;
@@ -13,5 +14,5 @@ public interface AuthenticationService {
 
     void verifyUser(OtpDto otpDto);
 
-    void resendVerificationCode(OtpDto otpDto);
+    void resendVerificationCode(EmailDto emailDto);
 }

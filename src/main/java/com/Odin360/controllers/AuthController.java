@@ -67,8 +67,8 @@ public class AuthController {
       return  ResponseEntity.ok("Verification successful");
     }
     @PostMapping("/resendOtp")
-    public ResponseEntity<String> resendVerificationCode(@RequestBody OtpDto otpDto){
-        authenticationService.resendVerificationCode(otpDto);
+    public ResponseEntity<String> resendVerificationCode(@RequestBody EmailDto emailDto){
+        authenticationService.resendVerificationCode(emailDto);
         return  ResponseEntity.ok("Verification Code resent successfully");
     }
 }
