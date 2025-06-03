@@ -28,10 +28,10 @@ public class User {
     @Column(nullable = false)
     private boolean enabled;
     @ManyToMany
-    @JoinTable(name = "user_organization",
+    @JoinTable(name = "user_team",
             joinColumns = @JoinColumn(name = "user_id"),
-            inverseJoinColumns = @JoinColumn(name = "organization_id"))
-    private List<Organization> organization = new ArrayList<>();
+            inverseJoinColumns = @JoinColumn(name = "team_id"))
+    private List<Team> team = new ArrayList<>();
     @Column(name = "verificationCodeTime")
     private LocalDateTime verificationCodeExpiresAt;
     private String verificationCode;

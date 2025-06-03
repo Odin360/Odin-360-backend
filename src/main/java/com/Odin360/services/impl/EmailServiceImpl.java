@@ -31,7 +31,7 @@ public class EmailServiceImpl implements EmailService {
     @Override
     public String generateVerificationCode() {
           Random random = new Random();
-          int code = random.nextInt(20000,80000) + 100000;
+          int code = random.nextInt(20000,80000) + 10000;
           return String.valueOf(code);
 
     }

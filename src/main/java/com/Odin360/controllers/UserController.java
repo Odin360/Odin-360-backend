@@ -27,6 +27,6 @@ public class UserController {
         CreateUserDto retrievedUserDto = userMapper.toDto(retrievedUser);
         return ResponseEntity.ok(retrievedUserDto);
     }
- //update password
+
 
 }

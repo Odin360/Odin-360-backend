@@ -16,12 +16,15 @@ import java.util.UUID;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-@Table(name = "Organization")
-public class Organization {
+@Table(name = "Team")
+public class Team {
     private String name;
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
-    @ManyToMany(mappedBy = "organization")
+    @Column(columnDefinition = "Text")
+    private String description;
+    private String drive;
+    @ManyToMany(mappedBy = "team")
     private List <User> user = new ArrayList<>();
 }

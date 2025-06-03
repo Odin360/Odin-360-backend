@@ -8,6 +8,7 @@ import com.Odin360.services.AuthenticationService;
 import com.Odin360.services.EmailService;
 import com.Odin360.services.UserService;
 import jakarta.mail.MessagingException;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -40,6 +41,7 @@ public class AuthController {
         return ResponseEntity.ok(authResponse);
     }
     @PostMapping("/signUp")
+    @Transactional
     public ResponseEntity<CreateUserDto> createUser(@RequestBody  CreateUserDto createUserDto) throws MessagingException {
         User savedUser = userService.createUser(createUserDto);
         savedUser.setEnabled(false);
