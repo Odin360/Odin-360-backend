@@ -10,7 +10,7 @@ import java.util.UUID;
 @AllArgsConstructor
 @NoArgsConstructor
 public class TeamResponse {
-    private UUID UUID;
+    private UUID id;
     private String name;
     private String drive;
 }

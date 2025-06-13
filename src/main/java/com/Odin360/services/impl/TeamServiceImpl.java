@@ -8,6 +8,9 @@ import com.Odin360.services.TeamService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+import java.util.UUID;
+
 @Service
 @RequiredArgsConstructor
 public class TeamServiceImpl implements TeamService {
@@ -17,5 +20,20 @@ public class TeamServiceImpl implements TeamService {
     public Team createTeam(CreateTeamDto createTeamDto) {
         Team team = teamMapper.fromCreateTeamDto(createTeamDto);
         return  teamRepository.save(team);
+    }
+
+    @Override
+    public List<Team> getTeam() {
+        return teamRepository.findAll();
+    }
+
+    @Override
+    public void deleteTeam(UUID teamId) {
+       if(teamRepository.existsById(teamId)){
+           teamRepository.deleteById(teamId);
+       }
+       else{
+           throw new RuntimeException("User with id "+teamId+",does not exist");
+       }
     }
 }

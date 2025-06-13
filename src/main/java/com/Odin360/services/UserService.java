@@ -19,4 +19,6 @@ public interface UserService {
     void updatePasswordByEmail(UserPasswordDto passwordDto);
 
     User findByEmail(EmailDto emailDto);
+
+    void joinTeam(UUID userId, UUID teamId);
 }

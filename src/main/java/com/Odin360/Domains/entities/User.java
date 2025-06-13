@@ -14,6 +14,7 @@ import java.util.UUID;
 @Getter
 @Setter
 @AllArgsConstructor
+@Builder
 @NoArgsConstructor
 @Table(name = "users")
 public class User {
@@ -29,9 +30,10 @@ public class User {
     private boolean enabled;
     @ManyToMany
     @JoinTable(name = "user_team",
-            joinColumns = @JoinColumn(name = "user_id"),
-            inverseJoinColumns = @JoinColumn(name = "team_id"))
-    private List<Team> team = new ArrayList<>();
+            joinColumns = @JoinColumn(name = "user_id",referencedColumnName = "id"),
+            inverseJoinColumns = @JoinColumn(name = "team_id",referencedColumnName = "id")
+           )
+    private List<Team> teams = new ArrayList<>();
     @Column(name = "verificationCodeTime")
     private LocalDateTime verificationCodeExpiresAt;
     private String verificationCode;

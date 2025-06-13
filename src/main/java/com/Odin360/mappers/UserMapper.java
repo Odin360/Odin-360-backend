@@ -1,9 +1,6 @@
 package com.Odin360.mappers;
 
-import com.Odin360.Domains.Dtos.CreateUserDto;
-import com.Odin360.Domains.Dtos.EmailDto;
-import com.Odin360.Domains.Dtos.OtpDto;
-import com.Odin360.Domains.Dtos.UserPasswordDto;
+import com.Odin360.Domains.Dtos.*;
 import com.Odin360.Domains.entities.User;
 import org.mapstruct.Mapper;
 
@@ -16,4 +13,5 @@ public interface UserMapper {
     User fromDto (CreateUserDto createUserDto);
     User fromPasswordDto (UserPasswordDto userPasswordDto);
     User fromEmailDto (EmailDto emailDto);
+    UserDto fromUser (User user);
 }

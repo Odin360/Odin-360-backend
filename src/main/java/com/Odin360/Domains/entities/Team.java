@@ -1,10 +1,7 @@
 package com.Odin360.Domains.entities;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -16,7 +13,8 @@ import java.util.UUID;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-@Table(name = "Team")
+@Builder
+@Table(name = "team")
 public class Team {
     private String name;
     @Id
@@ -25,6 +23,6 @@ public class Team {
     @Column(columnDefinition = "Text")
     private String description;
     private String drive;
-    @ManyToMany(mappedBy = "team")
-    private List <User> user = new ArrayList<>();
+    @ManyToMany(mappedBy = "teams")
+    private List <User> users = new ArrayList<>();
 }

@@ -3,10 +3,13 @@ package com.Odin360.services.impl;
 import com.Odin360.Domains.Dtos.CreateUserDto;
 import com.Odin360.Domains.Dtos.EmailDto;
 import com.Odin360.Domains.Dtos.UserPasswordDto;
+import com.Odin360.Domains.entities.Team;
 import com.Odin360.Domains.entities.User;
 import com.Odin360.mappers.UserMapper;
+import com.Odin360.repositories.TeamRepository;
 import com.Odin360.repositories.UserRepository;
 import com.Odin360.services.UserService;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -21,6 +24,7 @@ public class UserServiceImpl implements UserService {
     private final UserMapper userMapper;
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
+    private final TeamRepository teamRepository;
     @Override
     public List<User> listUsers() {
         return userRepository.findAll();
@@ -56,4 +60,14 @@ public class UserServiceImpl implements UserService {
                 .orElseThrow(()->new RuntimeException(user.getEmail()+" was not found"));
     }
 
+    @Override
+    @Transactional
+    public void joinTeam(UUID userId, UUID teamId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(()->new RuntimeException("User not found"));
+        Team team = teamRepository.findById(teamId)
+                .orElseThrow(()->new RuntimeException("Team not found"));
+        user.getTeams().add(team);
+        userRepository.save(user);
+    }
 }
