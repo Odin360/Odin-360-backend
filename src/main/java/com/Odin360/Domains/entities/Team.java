@@ -4,6 +4,8 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.List;
 import java.util.UUID;
 
@@ -14,6 +16,7 @@ import java.util.UUID;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
+@EqualsAndHashCode(of="id")
 @Table(name = "team")
 public class Team {
     private String name;
@@ -23,6 +26,6 @@ public class Team {
     @Column(columnDefinition = "Text")
     private String description;
     private String drive;
-    @ManyToMany(mappedBy = "teams")
-    private List <User> users = new ArrayList<>();
+    @ManyToMany(mappedBy = "teams",fetch = FetchType.EAGER)
+    private Set <User> users = new HashSet<>();
 }

@@ -2,14 +2,17 @@ package com.Odin360.services.impl;
 
 import com.Odin360.Domains.Dtos.CreateTeamDto;
 import com.Odin360.Domains.entities.Team;
+import com.Odin360.Domains.entities.User;
 import com.Odin360.mappers.TeamMapper;
 import com.Odin360.repositories.TeamRepository;
 import com.Odin360.services.TeamService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.UUID;
+import java.util.Set;
 
 @Service
 @RequiredArgsConstructor
@@ -23,8 +26,9 @@ public class TeamServiceImpl implements TeamService {
     }
 
     @Override
-    public List<Team> getTeam() {
-        return teamRepository.findAll();
+    public Set<Team> getTeam() {
+        List<Team>teams= teamRepository.findAll();
+        return new HashSet<>(teams);
     }
 
     @Override
@@ -35,5 +39,13 @@ public class TeamServiceImpl implements TeamService {
        else{
            throw new RuntimeException("User with id "+teamId+",does not exist");
        }
+    }
+
+    @Override
+    public Set<User> getUsers(UUID teamId) {
+            Team team = teamRepository.findById(teamId)
+                    .orElseThrow(()->new RuntimeException("team not found"));
+            return team.getUsers();
+
     }
 }

@@ -1,10 +1,9 @@
 package com.Odin360.controllers;
 
-import com.Odin360.Domains.Dtos.CreateUserDto;
-import com.Odin360.Domains.Dtos.EmailDto;
-import com.Odin360.Domains.Dtos.UserDto;
-import com.Odin360.Domains.Dtos.UserPasswordDto;
+import com.Odin360.Domains.Dtos.*;
+import com.Odin360.Domains.entities.Team;
 import com.Odin360.Domains.entities.User;
+import com.Odin360.mappers.TeamMapper;
 import com.Odin360.mappers.UserMapper;
 import com.Odin360.services.UserService;
 import lombok.RequiredArgsConstructor;
@@ -12,14 +11,19 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.UUID;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping(path = "/api/v1/users")
 @RequiredArgsConstructor
 public class UserController {
     private final UserService userService;
-    public final UserMapper userMapper;
+    private final UserMapper userMapper;
+    private final TeamMapper teamMapper;
+
 //create user
 
  //get user by id
@@ -31,8 +35,8 @@ public class UserController {
     }
     @PutMapping("/{userId}/{teamId}")
 public ResponseEntity<String> joinTeam(@PathVariable UUID userId,@PathVariable UUID teamId){
-        userService.joinTeam(userId,teamId);
-        return ResponseEntity.ok("Team has been joined successfully");
+         userService.joinTeam(userId,teamId);
+        return ResponseEntity.ok("Team joined successfully");
 }
   @PostMapping("/user")
  public ResponseEntity<UserDto> getByEmail(@RequestBody EmailDto emailDto){
@@ -40,4 +44,15 @@ public ResponseEntity<String> joinTeam(@PathVariable UUID userId,@PathVariable U
         UserDto userDto = userMapper.fromUser(user);
         return ResponseEntity.ok(userDto);
     }
+    @DeleteMapping("/{userId}")
+    public ResponseEntity<String> deleteById(@PathVariable UUID userId){
+        userService.deleteById(userId);
+        return ResponseEntity.ok("User deleted successfully");
+    }
+    @GetMapping("/teams/{userId}")
+    public ResponseEntity<Set<TeamResponse>> getTeams(@PathVariable UUID userId){
+        Set<Team> teams = userService.getTeams(userId);
+        return ResponseEntity.ok(teams.stream().map(teamMapper::toTeamResponse).collect(Collectors.toSet()));
+    }
+
 }

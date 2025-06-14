@@ -5,8 +5,10 @@ import lombok.*;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.UUID;
+import java.util.Set;
 
 
 @Entity
@@ -16,6 +18,7 @@ import java.util.UUID;
 @AllArgsConstructor
 @Builder
 @NoArgsConstructor
+@EqualsAndHashCode(of = "id")
 @Table(name = "users")
 public class User {
     @Id
@@ -33,7 +36,7 @@ public class User {
             joinColumns = @JoinColumn(name = "user_id",referencedColumnName = "id"),
             inverseJoinColumns = @JoinColumn(name = "team_id",referencedColumnName = "id")
            )
-    private List<Team> teams = new ArrayList<>();
+    private Set<Team> teams = new HashSet<>();
     @Column(name = "verificationCodeTime")
     private LocalDateTime verificationCodeExpiresAt;
     private String verificationCode;

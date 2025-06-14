@@ -14,9 +14,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -26,8 +25,9 @@ public class UserServiceImpl implements UserService {
     private final PasswordEncoder passwordEncoder;
     private final TeamRepository teamRepository;
     @Override
-    public List<User> listUsers() {
-        return userRepository.findAll();
+    public Set<User> listUsers() {
+        List<User>users= userRepository.findAll();
+        return new HashSet<>(users);
     }
 
     @Override
@@ -62,12 +62,33 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional
-    public void joinTeam(UUID userId, UUID teamId) {
+    public User joinTeam(UUID userId, UUID teamId) {
         User user = userRepository.findById(userId)
                 .orElseThrow(()->new RuntimeException("User not found"));
         Team team = teamRepository.findById(teamId)
                 .orElseThrow(()->new RuntimeException("Team not found"));
         user.getTeams().add(team);
-        userRepository.save(user);
+        team.getUsers().add(user);
+        teamRepository.save(team);
+       return userRepository.save(user);
+
+    }
+
+    @Override
+    public void deleteById(UUID userId) {
+        if(userRepository.existsById(userId)){
+            userRepository.deleteById(userId);
+        }
+        else {
+            throw new RuntimeException("User does not exist");
+        }
+    }
+
+    @Override
+    public Set<Team> getTeams(UUID userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(()->new RuntimeException("user not found"));
+        return user.getTeams();
+
     }
 }
