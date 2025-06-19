@@ -34,9 +34,9 @@ public class UserController {
         return ResponseEntity.ok(retrievedUserDto);
     }
     @PutMapping("/{userId}/{teamId}")
-public ResponseEntity<String> joinTeam(@PathVariable UUID userId,@PathVariable UUID teamId){
-         userService.joinTeam(userId,teamId);
-        return ResponseEntity.ok("Team joined successfully");
+public ResponseEntity<UserDto> joinTeam(@PathVariable UUID userId,@PathVariable UUID teamId){
+        User user = userService.joinTeam(userId,teamId);
+        return ResponseEntity.ok(userMapper.fromUser(user));
 }
   @PostMapping("/user")
  public ResponseEntity<UserDto> getByEmail(@RequestBody EmailDto emailDto){
