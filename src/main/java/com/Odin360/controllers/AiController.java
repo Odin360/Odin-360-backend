@@ -12,8 +12,8 @@ import java.util.UUID;
 @RequestMapping("/api/v1/ai")
 public class AiController {
     private final AiService aiService;
-    @GetMapping("/{userId}/askAi")
-    public ResponseEntity<String> askAi(@PathVariable UUID userId, @RequestParam String prompt){
-        return ResponseEntity.ok(aiService.askAi(userId,prompt));
+    @GetMapping("/{channelId}/askAi")
+    public ResponseEntity<String> askAi(@PathVariable String channelId, @RequestParam String prompt){
+        return ResponseEntity.ok(aiService.askAi(channelId,prompt));
     }
 }
