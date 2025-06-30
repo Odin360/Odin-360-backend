@@ -16,6 +16,7 @@ import java.util.Set;
 @Builder
 public class UserDto {
     private String email;
+    private String username;
     private UUID id;
     private Set<TeamResponse>teams=new HashSet<>();
 

@@ -5,8 +5,10 @@ import com.Odin360.Domains.entities.Team;
 import com.Odin360.Domains.entities.User;
 import com.Odin360.mappers.TeamMapper;
 import com.Odin360.mappers.UserMapper;
+import com.Odin360.services.StreamService;
 import com.Odin360.services.UserService;
 import lombok.RequiredArgsConstructor;
+import org.eclipse.angus.mail.iap.Response;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -23,6 +25,7 @@ public class UserController {
     private final UserService userService;
     private final UserMapper userMapper;
     private final TeamMapper teamMapper;
+    private final StreamService streamService;
 
 //create user
 
@@ -54,5 +57,8 @@ public ResponseEntity<UserDto> joinTeam(@PathVariable UUID userId,@PathVariable 
         Set<Team> teams = userService.getTeams(userId);
         return ResponseEntity.ok(teams.stream().map(teamMapper::toTeamResponse).collect(Collectors.toSet()));
     }
-
+    @GetMapping("/generateToken/{userId}")
+    public ResponseEntity<String> generateClientToken(@PathVariable String userId){
+        return ResponseEntity.ok(streamService.clientToken(userId));
+    }
 }
