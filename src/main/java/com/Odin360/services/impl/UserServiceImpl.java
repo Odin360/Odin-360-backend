@@ -31,6 +31,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Transactional
     public User createUser(CreateUserDto createUserDto) {
          User user = userMapper.fromDto(createUserDto);
          user.setPassword(passwordEncoder.encode(user.getPassword()));
@@ -90,5 +91,10 @@ public class UserServiceImpl implements UserService {
                 .orElseThrow(()->new RuntimeException("user not found"));
         return user.getTeams();
 
+    }
+
+    @Override
+    public UUID generateRandomUUID() {
+        return UUID.randomUUID();
     }
 }

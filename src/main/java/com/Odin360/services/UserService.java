@@ -28,4 +28,6 @@ public interface UserService {
     void deleteById(UUID userId);
 
     Set<Team> getTeams(UUID userId);
+
+    UUID generateRandomUUID();
 }

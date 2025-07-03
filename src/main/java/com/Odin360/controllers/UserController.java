@@ -61,4 +61,8 @@ public ResponseEntity<UserDto> joinTeam(@PathVariable UUID userId,@PathVariable 
     public ResponseEntity<String> generateClientToken(@PathVariable String userId){
         return ResponseEntity.ok(streamService.clientToken(userId));
     }
+    @GetMapping("/generateRandomUUID")
+    public ResponseEntity<UUID>  generateRandomUUID(){
+        return ResponseEntity.ok(userService.generateRandomUUID());
+    }
 }
