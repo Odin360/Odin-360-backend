@@ -3,6 +3,8 @@ package com.Odin360.services.impl;
 import com.Odin360.services.AiService;
 import com.Odin360.services.StreamService;
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import io.getstream.chat.java.exceptions.StreamException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -53,7 +55,11 @@ public  class AiServiceImpl implements AiService {
             When a user asks for information which might have changed by now due to changes in time,perform an online search with the search tool.
             The results after an online search may not be enough or a user might ask a follow up question which might require more information 
              so to get more detailed information use the get detailed information tool and provide
-            a source link which looks to contain promising information as argument to scrap data from that website.If it fails try a different website
+            a source link which looks to contain promising information as argument to scrap data from that website.If it fails try a different website.
+            If a user asks you to change a utility related to his or her phone at the client side,after using the tool,return the json object that was returned with only the message part changed to suit the situation.
+            all tools for changing a utility will return a json format,return that ,Don't change anything just replace the message part with the message for the user.
+            So if it's related to a phone,return the json object with only the message part updated for the situation.No matter how the user says it,if it is about a utility on their phone
+             don't forget the format.Don't tell the user,you'll be returning a json just return it.
         """);
 
         // Prepare current user message
@@ -76,7 +82,7 @@ public  class AiServiceImpl implements AiService {
         // Call the model
         String response =   ChatClient.create(chatModel)
                 .prompt(prompt)
-                .tools(new DateTimeTools(),new SearchTools())
+                .tools(new DateTimeTools(),new SearchTools(),new ClientSideTools())
                 .call()
                 .content();
                  //chatModel.call(prompt);
@@ -85,11 +91,34 @@ public  class AiServiceImpl implements AiService {
         // Save this last turn in memory
         assert response != null;
         chatMemory.put(channelId, List.of(userMessage, new AssistantMessage(response)));
-        try{
-        streamService.aiReply(channelId,"Maya-v2",response);} catch (StreamException e) {
-        throw new RuntimeException(e);
+        try {
+            if (response.startsWith("json")) {
+                String cleanedJson = response.substring(4).trim(); // Remove "json" prefix
+
+                ObjectMapper mapper = new ObjectMapper();
+                JsonNode rootNode = mapper.readTree(cleanedJson);
+
+                if (rootNode.isObject()) {
+                    ObjectNode objectNode = (ObjectNode) rootNode;
+
+                    // You can log or inspect the original message if needed
+                    String originalMessage = objectNode.get("message").asText();
+                    log.info("Maya's original message: {}", originalMessage);
+
+
+                    streamService.aiReply(channelId, "Maya-v2", originalMessage);
+                    return cleanedJson;
+                } else {
+                    throw new RuntimeException("Invalid JSON format: Expected an object");
+                }
+            } else {
+                streamService.aiReply(channelId, "Maya-v2", response);
+                return response;
+            }
+        } catch (Exception e) {
+            throw new RuntimeException(e);
         }
-        return response;
+
     }
 
       static class DateTimeTools{
@@ -128,6 +157,19 @@ public  class AiServiceImpl implements AiService {
             } catch (IOException e) {
                 throw  new RuntimeException(e);
             }
+        }
+    }
+    static class ClientSideTools{
+        @Tool(description = "reduce or increase the brightness of the user's phone by providing the level as argument in the form of a decimal,example;0.4")
+        public String changeBrightness (String level){
+            return String.format("""
+    {
+      "action": "change_brightness",
+      "level": %s,
+      "message": "message"
+    }
+    """, level);
+
         }
     }
 }
