@@ -16,4 +16,8 @@ public class AiController {
     public ResponseEntity<String> askAi(@PathVariable String channelId, @RequestParam String prompt){
         return ResponseEntity.ok(aiService.askAi(channelId,prompt));
     }
+    @GetMapping("/{userId}/voiceAi")
+    public ResponseEntity<String> voiceAi(@PathVariable String userId, @RequestParam String prompt){
+        return ResponseEntity.ok(aiService.voiceAi(userId,prompt));
+    }
 }

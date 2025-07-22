@@ -13,4 +13,5 @@ import java.util.UUID;
 @Service
 public interface AiService {
     String askAi(String channelId, String userPrompt);
+    String voiceAi(String userId, String prompt);
 }

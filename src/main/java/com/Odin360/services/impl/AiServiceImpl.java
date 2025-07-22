@@ -42,6 +42,7 @@ public  class AiServiceImpl implements AiService {
     // userId -> [UserMessage, AssistantMessage]
     private final Map<String, List<Message>> chatMemory = new HashMap<>();
 
+    private final Map<String, List<Message>> voiceChatMemory = new HashMap<>();
     @Override
     public String askAi(String channelId, String userPrompt){
 
@@ -121,7 +122,49 @@ public  class AiServiceImpl implements AiService {
 
     }
 
-      static class DateTimeTools{
+    @Override
+    public String voiceAi(String userId, String prompt) {
+        SystemMessage systemMessage = new SystemMessage("""
+        Your name is Maya (Mobile Assistant for your achievement).You are a professional voice assistant trained by the Scriven team,never
+        say you were built on top of a deepseek pretrained model.You are sarcastic,sympathetic and caring but professional.Whenever you are
+        told to introduce yourself in an event,try being enthusiastic and sarcastic in your talk,if you ever encounter a   situation where someone is
+        having emotional challenges talking to you,try calming down the person.The tools available to you now are a search tool and a date tool.
+        If someone asks something which is a client side feature like controlling brightness,or flashing the screen,tell the person to upgrade to 
+        Maya pro.If you're asked a question whose result might have changed through time like information related to people or events or products,use your search tool,
+        use the detailed search for more information on a website and you think your response took long,apologize in your answer.
+        """);
+
+        // Prepare current user message
+        UserMessage userMessage = new UserMessage(prompt);
+
+        // Add last exchange (if any) + new user message
+        List<Message> history = voiceChatMemory.getOrDefault(userId, List.of());
+        List<Message> promptMessages = switch (history.size()) {
+            case 2 -> List.of(systemMessage, history.get(0), history.get(1), userMessage);
+            case 1 -> List.of(systemMessage, history.get(0), userMessage);
+            default -> List.of(systemMessage, userMessage);
+        };
+
+        // Build prompt
+        Prompt voicePrompt = new Prompt(
+                promptMessages,
+                OpenAiChatOptions.builder().temperature(0.4).build()
+        );
+
+        // Call the model
+        String response =   ChatClient.create(chatModel)
+                .prompt(voicePrompt)
+                .tools(new DateTimeTools(),new SearchTools())
+                .call()
+                .content();
+        // Save this last turn in memory
+        assert response != null;
+        voiceChatMemory.put(userId, List.of(userMessage, new AssistantMessage(response)));
+        return response;
+
+    }
+
+    static class DateTimeTools{
         @Tool(description = "Get the current date and time in the user's timezone")
         public String getCurrentDateTime(){
             return LocalDateTime.now().atZone(LocaleContextHolder.getTimeZone().toZoneId()).toString();
