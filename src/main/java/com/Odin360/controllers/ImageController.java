@@ -18,6 +18,7 @@ import java.io.IOException;
 import java.net.URLEncoder; // For URL encoding filenames
 import java.nio.charset.StandardCharsets; // For URL encoding character set
 import java.nio.file.Files;
+import java.util.UUID;
 
 @Slf4j // Provides a logger instance
 @RestController
@@ -27,18 +28,10 @@ public class ImageController {
 
     private final ImageService imageService;
 
-    /**
-     * Handles image uploads.
-     * Requires a 'file' parameter (MultipartFile) and a 'userId' in the path.
-     *
-     * @param file The image file to upload.
-     * @param userId The ID of the user uploading the image.
-     * @return ResponseEntity indicating success or failure.
-     */
     @PostMapping("/upload/{userId}")
     public ResponseEntity<String> uploadImage(
             @RequestParam("file") MultipartFile file,
-            @PathVariable String userId) {
+            @PathVariable UUID userId) {
         try {
             imageService.uploadImage(file, userId);
             log.info("Image uploaded successfully for user: {}", userId);
@@ -62,20 +55,12 @@ public class ImageController {
         }
     }
 
-    /**
-     * Handles image downloads.
-     * Requires a 'storedFileName' as a request parameter and a 'userId' in the path.
-     *
-     * @param storedFileName The unique filename of the image as stored on the server.
-     * @param userId The ID of the user who owns the image.
-     * @return ResponseEntity containing the image file as a resource.
-     */
+
     @GetMapping("/download/{userId}")
-    public ResponseEntity<Resource> downloadImage(
-            @RequestParam("file") String storedFileName, // Renamed param for clarity with service
-            @PathVariable String userId) {
+    public ResponseEntity<Resource> downloadImage(// Renamed param for clarity with service
+            @PathVariable UUID userId) {
         try {
-            File fileToDownload = imageService.downloadImage(storedFileName, userId);
+            File fileToDownload = imageService.downloadImage(userId);
 
             // Determine content type dynamically
             String contentType = Files.probeContentType(fileToDownload.toPath());
@@ -84,25 +69,24 @@ public class ImageController {
             }
 
             // Set Content-Disposition header to suggest filename for download
-            String originalDownloadFileName = storedFileName; // You might get the original name from a DB if stored
-            String encodedFileName = URLEncoder.encode(originalDownloadFileName, StandardCharsets.UTF_8.toString()).replace("+", "%20");
-            String headerValue = "attachment; filename=\"" + encodedFileName + "\"; filename*=UTF-8''" + encodedFileName;
 
             return ResponseEntity.ok()
                     .contentType(MediaType.parseMediaType(contentType)) // Set dynamic content type
                     .contentLength(fileToDownload.length())              // Set file size
-                    .header(HttpHeaders.CONTENT_DISPOSITION, headerValue) // Suggest filename for browser
+                    .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + URLEncoder.encode(fileToDownload.getName(), StandardCharsets.UTF_8) + "\"")
+                    // Suggest filename for browser
                     .body(new FileSystemResource(fileToDownload));       // Return file as resource
 
-        } catch (FileNotFoundException e) {
+        } //catch (FileNotFoundException e) {
             // Catches specific error if the file does not exist
-            log.warn("File not found during download: User ID={}, Stored Filename={}", userId, storedFileName);
-            return ResponseEntity.notFound().build(); // 404 Not Found
-        } catch (IllegalArgumentException e) {
+           // log.warn("File not found during download: User ID={}, Stored Filename={}", userId);
+           // return ResponseEntity.notFound().build(); // 404 Not Found
+        //} catch (IllegalArgumentException e) {
             // Catches validation errors from the service (e.g., filename/userId empty)
-            log.warn("Bad request for image download (User ID: {}, Filename: {}): {}", userId, storedFileName, e.getMessage());
-            return ResponseEntity.badRequest().body(null); // 400 Bad Request (no body for Resource type)
-        } catch (SecurityException e) {
+          //  log.warn("Bad request for image download (User ID: {}, Filename: {}): {}", userId, e.getMessage());
+          //  return ResponseEntity.badRequest().body(null); // 400 Bad Request (no body for Resource type)
+        //}
+        catch (SecurityException e) {
             // Catches security-related issues (e.g., path traversal detected)
             log.error("Security violation during image download for user {}: {}", userId, e.getMessage());
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body(null); // 403 Forbidden (no body for Resource type)
