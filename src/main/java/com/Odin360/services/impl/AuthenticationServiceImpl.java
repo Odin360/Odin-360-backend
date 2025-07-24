@@ -72,6 +72,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         user.setVerificationCode(code);
         userRepository.save(user);
         String subject = "Account Verification";
+        String from = "kingofintelligence8@gmail.com";
         String verificationCode = "VERIFICATION CODE " + code;
         String htmlMessage = "<html>"
                 + "<body style=\"font-family: Arial, sans-serif;\">"
@@ -86,7 +87,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                 + "</body>"
                 + "</html>";
         try{
-            emailService.sendVerificationEmail(user.getEmail(), subject, htmlMessage);
+            emailService.sendVerificationEmail(user.getEmail(), subject, htmlMessage,from);
             log.info("email sent successfully");
         }
         catch (MessagingException e){
@@ -119,6 +120,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         if (LocalDateTime.now().isBefore(retrievedUser.getVerificationCodeExpiresAt())){
             String code = retrievedUser.getVerificationCode();
             String subject = "Account Verification";
+            String from = "kingofintelligence8@gmail.com";
             String verificationCode = "VERIFICATION CODE " + code;
             String htmlMessage = "<html>"
                     + "<body style=\"font-family: Arial, sans-serif;\">"
@@ -133,7 +135,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                     + "</body>"
                     + "</html>";
             try{
-                emailService.sendVerificationEmail(retrievedUser.getEmail(), subject, htmlMessage);
+                emailService.sendVerificationEmail(retrievedUser.getEmail(), subject, htmlMessage,from);
                 log.info("verification code  resent successfully");
             }
             catch (MessagingException e){
