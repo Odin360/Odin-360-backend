@@ -4,6 +4,6 @@ import jakarta.mail.MessagingException;
 import org.springframework.security.core.userdetails.UserDetails;
 
 public interface EmailService {
-    void sendVerificationEmail(String to, String subject, String text,String from) throws MessagingException;
+    void sendEmail(String to, String subject, String text,String from) throws MessagingException;
     String generateVerificationCode();
 }

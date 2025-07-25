@@ -16,7 +16,7 @@ import java.util.Random;
 public class EmailServiceImpl implements EmailService {
     private final JavaMailSender emailSender;
     @Override
-    public void sendVerificationEmail(String to, String subject, String text,String from) throws MessagingException {
+    public void sendEmail(String to, String subject, String text,String from) throws MessagingException {
         MimeMessage message = emailSender.createMimeMessage();
         MimeMessageHelper helper = new MimeMessageHelper(message,true);
         helper.setFrom(from);

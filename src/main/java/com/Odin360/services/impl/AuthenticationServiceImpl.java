@@ -77,7 +77,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         String htmlMessage = "<html>"
                 + "<body style=\"font-family: Arial, sans-serif;\">"
                 + "<div style=\"background-color: #f5f5f5; padding: 20px;\">"
-                + "<h2 style=\"color: #333;\">Welcome to Odin-360👋!</h2>"
+                + "<h2 style=\"color: #333;\">Welcome to Scriven</h2>"
                 + "<p style=\"font-size: 16px;\">Please enter the verification code below to continue💪:</p>"
                 + "<div style=\"background-color: #fff; padding: 20px; border-radius: 5px; box-shadow: 0 0 10px rgba(0,0,0,0.1);\">"
                 + "<h3 style=\"color: #333;\">Verification Code:</h3>"
@@ -87,7 +87,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                 + "</body>"
                 + "</html>";
         try{
-            emailService.sendVerificationEmail(user.getEmail(), subject, htmlMessage,from);
+            emailService.sendEmail(user.getEmail(), subject, htmlMessage,from);
             log.info("email sent successfully");
         }
         catch (MessagingException e){
@@ -125,7 +125,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
             String htmlMessage = "<html>"
                     + "<body style=\"font-family: Arial, sans-serif;\">"
                     + "<div style=\"background-color: #f5f5f5; padding: 20px;\">"
-                    + "<h2 style=\"color: #333;\">Welcome to Odin-360👋!</h2>"
+                    + "<h2 style=\"color: #333;\">Welcome to Scriven</h2>"
                     + "<p style=\"font-size: 16px;\">Please enter the verification code below to continue:</p>"
                     + "<div style=\"background-color: #fff; padding: 20px; border-radius: 5px; box-shadow: 0 0 10px rgba(0,0,0,0.1);\">"
                     + "<h3 style=\"color: #333;\">Verification Code:</h3>"
@@ -135,7 +135,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                     + "</body>"
                     + "</html>";
             try{
-                emailService.sendVerificationEmail(retrievedUser.getEmail(), subject, htmlMessage,from);
+                emailService.sendEmail(retrievedUser.getEmail(), subject, htmlMessage,from);
                 log.info("verification code  resent successfully");
             }
             catch (MessagingException e){

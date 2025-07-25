@@ -12,6 +12,9 @@ import java.util.UUID;
 
 @Service
 public interface AiService {
-    String askAi(String channelId, String userPrompt);
-    String voiceAi(String userId, String prompt);
+    String askAi(String channelId, String userPrompt,UUID teamId,UUID userId);
+    String voiceAi(UUID userId, String prompt,UUID teamId);
+    String askAiNoTeam(String channelId,UUID userId, String userPrompt);
+    String voiceAiNoTeam(UUID userId,String prompt);
+    String searchWithMaya(String prompt);
 }
