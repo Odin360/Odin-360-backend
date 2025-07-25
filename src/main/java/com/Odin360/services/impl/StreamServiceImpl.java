@@ -2,6 +2,7 @@ package com.Odin360.services.impl;
 
 import com.Odin360.services.StreamService;
 import io.getstream.chat.java.exceptions.StreamException;
+import io.getstream.chat.java.models.Event;
 import io.getstream.chat.java.models.Message;
 import io.getstream.chat.java.models.User;
 import io.getstream.chat.java.services.framework.Client;
@@ -26,6 +27,7 @@ public class StreamServiceImpl implements StreamService{
     public void aiReply(String channelId, String aiId,String assistantReply) throws StreamException{
         var message =  Message.MessageRequestObject.builder()
                 .text(assistantReply)
+                .additionalField("ai_generated",true)
                 .userId(aiId)
                 .build();
 
@@ -44,5 +46,16 @@ public class StreamServiceImpl implements StreamService{
             System.out.println(e);
             throw new RuntimeException(e);
         }
+    }
+
+    @Override
+    public void sendAiEvent(String channelId, String aiState,UUID userId) throws StreamException {
+        Event.send("messaging",channelId)
+                .event(Event.EventRequestObject.builder()
+                        .type("ai_indicator.update")
+                        .additionalField("ai_state",aiState)
+                        .userId(userId.toString())
+                        .build())
+                .request();
     }
 }

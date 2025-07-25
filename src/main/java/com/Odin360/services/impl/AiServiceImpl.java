@@ -45,6 +45,11 @@ public  class AiServiceImpl implements AiService {
     private final Map<String, List<Message>> voiceChatMemory = new HashMap<>();
     @Override
     public String askAi(String channelId, String userPrompt,UUID teamId,UUID userId){
+        try{
+            streamService.sendAiEvent(channelId,"AI_STATE_THINKING",userId);
+        } catch (StreamException e) {
+            throw new RuntimeException(e);
+        }
 
         // Prepare system message
         SystemMessage systemMessage = new SystemMessage("""
@@ -56,7 +61,8 @@ public  class AiServiceImpl implements AiService {
             When a user asks for information which might have changed by now due to changes in time,perform an online search with the search tool.
             The results after an online search may not be enough or a user might ask a follow up question which might require more information. 
              so to get more detailed information use the get detailed information tool and provide
-            a source link which looks to contain promising information as argument to scrap data from that website.If it fails try a different website.          
+            a source link which looks to contain promising information as argument to scrap data from that website.If it fails try a different website.
+            If someone tells you to send an email to someone and provides you the information,generate a subject,and a message yourself based on what the user wants you to send.          
        """);
 
         // Prepare current user message
@@ -75,7 +81,11 @@ public  class AiServiceImpl implements AiService {
                 promptMessages,
                 OpenAiChatOptions.builder().temperature(0.4).build()
         );
-
+        try{
+            streamService.sendAiEvent(channelId,"AI_STATE_GENERATING",userId);
+        } catch (StreamException e) {
+            throw new RuntimeException(e);
+        }
         // Call the model
         String response =   ChatClient.create(chatModel)
                 .prompt(prompt)
@@ -88,30 +98,14 @@ public  class AiServiceImpl implements AiService {
         // Save this last turn in memory
         assert response != null;
         chatMemory.put(channelId, List.of(userMessage, new AssistantMessage(response)));
-        try {
-            if (response.startsWith("json")) {
-                String cleanedJson = response.substring(4).trim(); // Remove "json" prefix
-
-                ObjectMapper mapper = new ObjectMapper();
-                JsonNode rootNode = mapper.readTree(cleanedJson);
-
-                if (rootNode.isObject()) {
-                    ObjectNode objectNode = (ObjectNode) rootNode;
-
-                    // You can log or inspect the original message if needed
-                    String originalMessage = objectNode.get("message").asText();
-                    log.info("Maya's original message: {}", originalMessage);
-
-
-                    streamService.aiReply(channelId, "Maya-v2", originalMessage);
-                    return cleanedJson;
-                } else {
-                    throw new RuntimeException("Invalid JSON format: Expected an object");
-                }
-            } else {
-                streamService.aiReply(channelId, "Maya-v2", response);
+        try {try{
+            streamService.sendAiEvent(channelId,"AI_STATE_IDLE",userId);
+        } catch (StreamException e) {
+            throw new RuntimeException(e);
+        }
+            streamService.aiReply(channelId, "Maya-v2", response);
                 return response;
-            }
+
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -164,6 +158,12 @@ public  class AiServiceImpl implements AiService {
 
     @Override
     public String askAiNoTeam(String channelId, UUID userId, String userPrompt) {
+
+        try{
+            streamService.sendAiEvent(channelId,"AI_STATE_THINKING",userId);
+        } catch (StreamException e) {
+            throw new RuntimeException(e);
+        }
         // Prepare system message
         SystemMessage systemMessage = new SystemMessage("""
             You are Maya — a smart, warm business assistant 🧠 built by Scriven.
@@ -175,7 +175,7 @@ public  class AiServiceImpl implements AiService {
             The results after an online search may not be enough or a user might ask a follow up question which might require more information 
              so to get more detailed information use the get detailed information tool and provide
             a source link which looks to contain promising information as argument to scrap data from that website.If it fails try a different website.
-        
+        If someone tells you to send an email to someone and provides you the information,generate a subject,and a message yourself based on what the user wants you to send.
         """);
 
         // Prepare current user message
@@ -194,7 +194,11 @@ public  class AiServiceImpl implements AiService {
                 promptMessages,
                 OpenAiChatOptions.builder().temperature(0.4).build()
         );
-
+        try{
+            streamService.sendAiEvent(channelId,"AI_STATE_GENERATING",userId);
+        } catch (StreamException e) {
+            throw new RuntimeException(e);
+        }
         // Call the model
         String response =   ChatClient.create(chatModel)
                 .prompt(prompt)
@@ -208,29 +212,14 @@ public  class AiServiceImpl implements AiService {
         assert response != null;
         chatMemory.put(channelId, List.of(userMessage, new AssistantMessage(response)));
         try {
-            if (response.startsWith("json")) {
-                String cleanedJson = response.substring(4).trim(); // Remove "json" prefix
-
-                ObjectMapper mapper = new ObjectMapper();
-                JsonNode rootNode = mapper.readTree(cleanedJson);
-
-                if (rootNode.isObject()) {
-                    ObjectNode objectNode = (ObjectNode) rootNode;
-
-                    // You can log or inspect the original message if needed
-                    String originalMessage = objectNode.get("message").asText();
-                    log.info("Maya's original message: {}", originalMessage);
-
-
-                    streamService.aiReply(channelId, "Maya-v2", originalMessage);
-                    return cleanedJson;
-                } else {
-                    throw new RuntimeException("Invalid JSON format: Expected an object");
-                }
-            } else {
+            try{
+            streamService.sendAiEvent(channelId,"AI_STATE_IDLE",userId);
+        } catch (StreamException e) {
+            throw new RuntimeException(e);
+        }
                 streamService.aiReply(channelId, "Maya-v2", response);
                 return response;
-            }
+
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
