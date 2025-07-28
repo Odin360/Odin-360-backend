@@ -384,7 +384,7 @@ public  class AiServiceImpl implements AiService {
                         </html>
                         """.formatted(senderEmail, subject, message);
 
-                String adminEmail = "kingofintelligence8@gmail.com";
+                String adminEmail = "scrivenapp@gmail.com";
                 emailService.sendEmail(receiverEmail, subject, emailBody, adminEmail);
                 return "email has been successfully sent to " + receiverEmail;
             } catch (MessagingException e) {
@@ -426,7 +426,7 @@ public  class AiServiceImpl implements AiService {
                             </html>
                             """.formatted(senderEmail, subject, message);
 
-                    String adminEmail = "kingofintelligence8@gmail.com";
+                    String adminEmail = "scrivenapp@gmail.com";
                     emailService.sendEmail(receiverEmail, subject, emailBody, adminEmail);
                     return "email has been successfully sent to " + receiverEmail;
                 } catch (MessagingException e) {

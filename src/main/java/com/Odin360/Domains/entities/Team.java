@@ -25,6 +25,8 @@ public class Team {
     private UUID id;
     @Column(columnDefinition = "Text")
     private String description;
+    @Column(columnDefinition = "Text")
+    private String meetingTranscript;
     private String drive;
     @ManyToMany(mappedBy = "teams",fetch = FetchType.EAGER)
     private Set <User> users = new HashSet<>();

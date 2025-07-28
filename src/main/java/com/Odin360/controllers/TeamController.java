@@ -3,6 +3,7 @@ package com.Odin360.controllers;
 
 import com.Odin360.Domains.Dtos.CreateTeamDto;
 import com.Odin360.Domains.Dtos.TeamResponse;
+import com.Odin360.Domains.Dtos.TranscriptResponse;
 import com.Odin360.Domains.Dtos.UserDto;
 import com.Odin360.Domains.entities.Team;
 import com.Odin360.Domains.entities.User;
@@ -46,5 +47,14 @@ public class TeamController {
   public ResponseEntity<List<UserDto>> listUsers(@PathVariable UUID teamId){
        Set<User>users=teamService.getUsers(teamId);
        return ResponseEntity.ok(users.stream().map(userMapper::fromUser).toList());
+  }
+  @PutMapping("/transcript")
+  public ResponseEntity<String> addTranscript(@RequestBody TranscriptResponse transcriptResponse){
+       teamService.addTranscript(transcriptResponse);
+       return ResponseEntity.ok("Transcript updated successfully");
+  }
+  @GetMapping("/transcript/{teamId}")
+  public ResponseEntity<String> getTranscript(@PathVariable UUID teamId){
+       return ResponseEntity.ok(teamService.getTranscript(teamId));
   }
 }

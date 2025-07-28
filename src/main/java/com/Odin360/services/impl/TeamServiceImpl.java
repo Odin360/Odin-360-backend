@@ -1,6 +1,7 @@
 package com.Odin360.services.impl;
 
 import com.Odin360.Domains.Dtos.CreateTeamDto;
+import com.Odin360.Domains.Dtos.TranscriptResponse;
 import com.Odin360.Domains.entities.Team;
 import com.Odin360.Domains.entities.User;
 import com.Odin360.mappers.TeamMapper;
@@ -46,6 +47,19 @@ public class TeamServiceImpl implements TeamService {
             Team team = teamRepository.findById(teamId)
                     .orElseThrow(()->new RuntimeException("team not found"));
             return team.getUsers();
+    }
 
+    @Override
+    public void addTranscript(TranscriptResponse transcriptResponse) {
+        Team team = teamRepository.findById(transcriptResponse.getTeamId())
+                .orElseThrow(()->new RuntimeException("team not found"));
+        team.setMeetingTranscript(team.getMeetingTranscript()+transcriptResponse.getTranscript());
+    }
+
+    @Override
+    public String getTranscript(UUID teamId) {
+        Team team = teamRepository.findById(teamId)
+                .orElseThrow(()->new RuntimeException("team not found"));
+        return team.getMeetingTranscript();
     }
 }

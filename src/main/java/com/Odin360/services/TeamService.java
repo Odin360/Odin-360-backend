@@ -1,6 +1,7 @@
 package com.Odin360.services;
 
 import com.Odin360.Domains.Dtos.CreateTeamDto;
+import com.Odin360.Domains.Dtos.TranscriptResponse;
 import com.Odin360.Domains.entities.Team;
 import com.Odin360.Domains.entities.User;
 import org.springframework.stereotype.Service;
@@ -18,4 +19,8 @@ public interface TeamService {
     void deleteTeam(UUID teamId);
 
     Set<User> getUsers(UUID teamId);
+
+    void addTranscript(TranscriptResponse transcriptResponse);
+
+    String getTranscript(UUID teamId);
 }
