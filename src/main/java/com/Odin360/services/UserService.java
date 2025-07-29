@@ -30,4 +30,6 @@ public interface UserService {
     Set<Team> getTeams(UUID userId);
 
     UUID generateRandomUUID();
+
+    void updateUserDetails(CreateUserDto userDto);
 }

@@ -61,6 +61,14 @@ public ResponseEntity<UserDto> joinTeam(@PathVariable UUID userId,@PathVariable 
     public ResponseEntity<String> generateClientToken(@PathVariable String userId){
         return ResponseEntity.ok(streamService.clientToken(userId));
     }
+    @PutMapping("/updateProfile")
+    public ResponseEntity<String> updateUserDetails(@RequestBody CreateUserDto userDto){
+        try{userService.updateUserDetails(userDto);
+        return  ResponseEntity.ok("User details updated succesfully");} catch (RuntimeException e) {
+            ResponseEntity.badRequest().body("An error occured when updating user");
+            throw new RuntimeException(e);
+        }
+    }
     @GetMapping("/generateRandomUUID")
     public ResponseEntity<UUID>  generateRandomUUID(){
         return ResponseEntity.ok(userService.generateRandomUUID());

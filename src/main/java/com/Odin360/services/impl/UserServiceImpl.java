@@ -97,4 +97,19 @@ public class UserServiceImpl implements UserService {
     public UUID generateRandomUUID() {
         return UUID.randomUUID();
     }
+
+    @Override
+    public void updateUserDetails(CreateUserDto userDto) {
+        User user = userRepository.findById(userDto.getId())
+                .orElseThrow(()->new RuntimeException("user not found"));
+        if(!Objects.equals(userDto.getEmail(), "")){
+            user.setEmail(userDto.getEmail());
+        }
+        if(!Objects.equals(userDto.getPassword(), "")){
+            user.setPassword(passwordEncoder.encode(userDto.getPassword()));
+        }
+        if(!Objects.equals(userDto.getUsername(),"")){
+            user.setUsername(userDto.getUsername());}
+    userRepository.save(user);
+    }
 }

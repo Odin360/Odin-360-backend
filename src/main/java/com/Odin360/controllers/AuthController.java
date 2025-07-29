@@ -43,14 +43,17 @@ public class AuthController {
     @PostMapping("/signUp")
     @Transactional
     public ResponseEntity<CreateUserDto> createUser(@RequestBody  CreateUserDto createUserDto) throws MessagingException {
-        User savedUser = userService.createUser(createUserDto);
+      try{  User savedUser = userService.createUser(createUserDto);
         savedUser.setEnabled(false);
         OdinUserDetails userDetails = new OdinUserDetails(savedUser);
         if(!userDetails.isEnabled()){
         authenticationService.sendVerificationEmail(savedUser);
         }
         CreateUserDto savedCreateUserDto = userMapper.toDto(savedUser);
-        return new ResponseEntity<>(savedCreateUserDto, HttpStatus.CREATED);
+        return new ResponseEntity<>(savedCreateUserDto, HttpStatus.CREATED);} catch (Exception e) {
+         ResponseEntity.badRequest().body("An error occured when creating user");
+          throw new RuntimeException(e);
+      }
     }
     @PostMapping("/verifyEmail")
     public ResponseEntity<String> verifyEmail(@RequestBody EmailDto emailDto) throws MessagingException {
