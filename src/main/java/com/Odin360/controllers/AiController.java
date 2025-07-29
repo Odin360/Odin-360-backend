@@ -1,6 +1,7 @@
 package com.Odin360.controllers;
 
 import com.Odin360.services.AiService;
+import io.getstream.chat.java.exceptions.StreamException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -13,7 +14,7 @@ import java.util.UUID;
 public class AiController {
     private final AiService aiService;
     @GetMapping("/{channelId}/{userId}/{teamId}/askAi")
-    public ResponseEntity<String> askAi(@PathVariable String channelId,@PathVariable UUID userId, @RequestParam String prompt,@PathVariable UUID teamId){
+    public ResponseEntity<String> askAi(@PathVariable String channelId,@PathVariable UUID userId, @RequestParam String prompt,@PathVariable UUID teamId) throws StreamException {
         return ResponseEntity.ok(aiService.askAi(channelId,prompt,teamId,userId));
     }
     @GetMapping("/{userId}/{teamId}/voiceAi")
@@ -21,7 +22,7 @@ public class AiController {
         return ResponseEntity.ok(aiService.voiceAi(userId,prompt,teamId));
     }
     @GetMapping("/{channelId}/{userId}/askAi")
-    public ResponseEntity<String> askAiNoTeam(@PathVariable String channelId,@PathVariable UUID userId, @RequestParam String prompt){
+    public ResponseEntity<String> askAiNoTeam(@PathVariable String channelId,@PathVariable UUID userId, @RequestParam String prompt) throws StreamException {
         return ResponseEntity.ok(aiService.askAiNoTeam(channelId,userId,prompt));
     }
 
