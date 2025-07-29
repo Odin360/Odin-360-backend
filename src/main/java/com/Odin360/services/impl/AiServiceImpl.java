@@ -44,7 +44,7 @@ public  class AiServiceImpl implements AiService {
 
     private final Map<String, List<Message>> voiceChatMemory = new HashMap<>();
     @Override
-    public String askAi(String channelId, String userPrompt,UUID teamId,UUID userId){
+    public String askAi(String channelId, String userPrompt,UUID teamId,UUID userId) throws StreamException {
         try{
             streamService.sendAiEvent(channelId,"AI_STATE_THINKING",userId);
         } catch (StreamException e) {
@@ -62,7 +62,10 @@ public  class AiServiceImpl implements AiService {
             The results after an online search may not be enough or a user might ask a follow up question which might require more information. 
              so to get more detailed information use the get detailed information tool and provide
             a source link which looks to contain promising information as argument to scrap data from that website.If it fails try a different website.
-            If someone tells you to send an email to someone and provides you the information,generate a subject,and a message yourself based on what the user wants you to send.          
+            If someone tells you to send an email to someone and provides you the information,generate a subject,and a message yourself based on what the user wants you to send.
+            If someone just provides you a username to send an email without giving you the email,first search the user's team and get the email your self.
+            Don't ask again for subject and message if the user adds what you should send.Plan everything yourself and send it but if the user does not tell you what to send,
+            ask for it and continue from there,don't show any draft unless the user asks for it.          
        """);
 
         // Prepare current user message
@@ -107,6 +110,7 @@ public  class AiServiceImpl implements AiService {
                 return response;
 
         } catch (Exception e) {
+            streamService.sendAiEvent(channelId,"AI_STATE_ERROR",userId);
             throw new RuntimeException(e);
         }
 
@@ -115,7 +119,7 @@ public  class AiServiceImpl implements AiService {
     @Override
     public String voiceAi(UUID userId, String prompt,UUID teamId) {
         SystemMessage systemMessage = new SystemMessage("""
-        Your name is Maya (Mobile Assistant for your achievement).You are a professional voice assistant trained by the Scriven team,never
+        Your name is Maya (Mobile Assistant for your achievement).You are a professional sacarstic voice assistant trained by the Scriven team,never
         say you were built on top of a deepseek pretrained model.You are sarcastic,sympathetic and caring but professional.Your answers should never be very long because remember,its a conversation.
         Whenever you are told to introduce yourself in an event,try being enthusiastic and sarcastic in your talk,if you ever encounter a   situation where someone is
         having emotional challenges talking to you,try calming down the person.The tools available to you now are a search tool and a date tool.
@@ -124,6 +128,10 @@ public  class AiServiceImpl implements AiService {
         use the detailed search for more information on a website and you think your response took long,apologize in your answer.Make sure you don't explicitly
         tell the user you are sarcastic,its a behaviour of yours so they need to figure it out themselves,also be professional on questions which require professionality
         don't always be sarcastic even when the situation is a professional one.
+        If someone tells you to send an email to someone and provides you the information,generate a subject,and a message yourself based on what the user wants you to send.
+            If someone just provides you a username to send an email without giving you the email,first search the user's team and get the email your self.
+            Don't ask again for subject and message if the user adds what you should send.Plan everything yourself and send it but if the user does not tell you what to send,
+            ask for it and continue from there,don't show any draft unless the user asks for it.
         """);
 
         // Prepare current user message
@@ -157,7 +165,7 @@ public  class AiServiceImpl implements AiService {
     }
 
     @Override
-    public String askAiNoTeam(String channelId, UUID userId, String userPrompt) {
+    public String askAiNoTeam(String channelId, UUID userId, String userPrompt) throws StreamException {
 
         try{
             streamService.sendAiEvent(channelId,"AI_STATE_THINKING",userId);
@@ -176,6 +184,10 @@ public  class AiServiceImpl implements AiService {
              so to get more detailed information use the get detailed information tool and provide
             a source link which looks to contain promising information as argument to scrap data from that website.If it fails try a different website.
         If someone tells you to send an email to someone and provides you the information,generate a subject,and a message yourself based on what the user wants you to send.
+          If someone just provides you a username to send an email without giving you the email,Tell the user you don't have access to the user's team because he has not joined 
+          one yet so he should provide the email,once it's provided,
+            Don't ask again for subject and message if the user adds what you should send.Plan everything yourself and send it but if the user does not tell you what to send,
+            ask for it and continue from there,don't show any draft unless the user asks for it.
         """);
 
         // Prepare current user message
@@ -221,6 +233,7 @@ public  class AiServiceImpl implements AiService {
                 return response;
 
         } catch (Exception e) {
+            streamService.sendAiEvent(channelId,"AI_STATE_ERROR",userId);
             throw new RuntimeException(e);
         }
     }
@@ -228,7 +241,7 @@ public  class AiServiceImpl implements AiService {
     @Override
     public String voiceAiNoTeam(UUID userId, String prompt) {
         SystemMessage systemMessage = new SystemMessage("""
-        Your name is Maya (Mobile Assistant for your achievement).You are a professional voice assistant trained by the Scriven team,never
+        Your name is Maya (Mobile Assistant for your achievement).You are a professional sarcastic voice assistant trained by the Scriven team,never
         say you were built on top of a deepseek pretrained model.You are sarcastic,sympathetic and caring but professional.Your answers should never be very long because remember,its a conversation.
         Whenever you are told to introduce yourself in an event,try being enthusiastic and sarcastic in your talk,if you ever encounter a   situation where someone is
         having emotional challenges talking to you,try calming down the person.The tools available to you now are a search tool and a date tool.
@@ -237,6 +250,12 @@ public  class AiServiceImpl implements AiService {
         use the detailed search for more information on a website and you think your response took long,apologize in your answer.Make sure you don't explicitly
         tell the user you are sarcastic,its a behaviour of yours so they need to figure it out themselves,also be professional on questions which require professionality
         don't always be sarcastic even when the situation is a professional one.
+        If someone tells you to send an email to someone and provides you the information,generate a subject,and a message yourself based on what the user wants you to send.
+          If someone just provides you a username to send an email without giving you the email,Tell the user you don't have access to the user's team because he has not joined 
+          one yet so he should provide the email,once it's provided,
+            Don't ask again for subject and message if the user adds what you should send.Plan everything yourself and send it but if the user does not tell you what to send,
+            ask for it and continue from there,don't show any draft unless the user asks for it.
+        
         """);
 
         // Prepare current user message

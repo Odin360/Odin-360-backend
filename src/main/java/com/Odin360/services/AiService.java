@@ -12,9 +12,9 @@ import java.util.UUID;
 
 @Service
 public interface AiService {
-    String askAi(String channelId, String userPrompt,UUID teamId,UUID userId);
+    String askAi(String channelId, String userPrompt,UUID teamId,UUID userId) throws StreamException;
     String voiceAi(UUID userId, String prompt,UUID teamId);
-    String askAiNoTeam(String channelId,UUID userId, String userPrompt);
+    String askAiNoTeam(String channelId,UUID userId, String userPrompt) throws StreamException;
     String voiceAiNoTeam(UUID userId,String prompt);
     String searchWithMaya(String prompt);
 }
